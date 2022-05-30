@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+
+	"github.com/nenodias/site-golang/db"
 )
 
 var temp = template.Must(template.ParseGlob("templates/*.html"))
@@ -16,6 +18,22 @@ type Produto struct {
 }
 
 func main() {
+	conn, err := db.GetConnection()
+	if err != nil {
+		fmt.Println("Erro na conexao")
+		panic(err)
+	}
+	err = db.Create(conn)
+	if err != nil {
+		fmt.Println("Erro no create")
+	}
+	res, err := conn.Query("SELECT * FROM produto")
+	if err != nil {
+		fmt.Println("Erro no select")
+		panic(err)
+	}
+	fmt.Println(res.Columns())
+	fmt.Println(res.Next())
 	http.HandleFunc("/", index)
 	fmt.Println(temp)
 	http.ListenAndServe(":8080", nil)
