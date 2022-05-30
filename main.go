@@ -11,6 +11,7 @@ import (
 var temp = template.Must(template.ParseGlob("templates/*.html"))
 
 type Produto struct {
+	Id         int64
 	Nome       string
 	Descricao  string
 	Preco      float64
