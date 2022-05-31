@@ -1,4 +1,4 @@
-package model
+package models
 
 type Produto struct {
 	Id         int64

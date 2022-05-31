@@ -7,7 +7,7 @@ import (
 
 	"github.com/mattn/go-sqlite3"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/nenodias/site-golang/model"
+	"github.com/nenodias/site-golang/models"
 )
 
 func Init() {
@@ -37,7 +37,7 @@ func Create(conn *sql.DB) error {
 	return err
 }
 
-func Insert(conn *sql.DB, produto *model.Produto) error {
+func Insert(conn *sql.DB, produto *models.Produto) error {
 	tx, err := conn.Begin()
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func Insert(conn *sql.DB, produto *model.Produto) error {
 	return tx.Commit()
 }
 
-func Update(conn *sql.DB, produto *model.Produto) error {
+func Update(conn *sql.DB, produto *models.Produto) error {
 	tx, err := conn.Begin()
 	if err != nil {
 		return err
@@ -72,8 +72,8 @@ func Update(conn *sql.DB, produto *model.Produto) error {
 	return tx.Commit()
 }
 
-func SelectById(conn *sql.DB, id int) (*model.Produto, error) {
-	produto := model.Produto{}
+func SelectById(conn *sql.DB, id int) (*models.Produto, error) {
+	produto := models.Produto{}
 	res := conn.QueryRow("SELECT * FROM produto WHERE id = ? ", id)
 	err := res.Scan(&produto.Id, &produto.Nome, &produto.Descricao, &produto.Preco, &produto.Quantidade)
 	if err != nil {
@@ -82,12 +82,12 @@ func SelectById(conn *sql.DB, id int) (*model.Produto, error) {
 	return &produto, nil
 }
 
-func SelectAll(conn *sql.DB) []model.Produto {
-	retorno := []model.Produto{}
+func SelectAll(conn *sql.DB) []models.Produto {
+	retorno := []models.Produto{}
 	res, err := conn.Query("SELECT * FROM produto", nil)
 	if err == nil {
 		for res.Next() {
-			produto := model.Produto{}
+			produto := models.Produto{}
 			err := res.Scan(&produto.Id, &produto.Nome, &produto.Descricao, &produto.Preco, &produto.Quantidade)
 			if err != nil {
 				fmt.Print(err)
