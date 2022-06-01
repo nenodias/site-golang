@@ -2,7 +2,7 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
+	"log"
 	"regexp"
 
 	"github.com/mattn/go-sqlite3"
@@ -102,7 +102,7 @@ func SelectAll(conn *sql.DB) []models.Produto {
 			produto := models.Produto{}
 			err := res.Scan(&produto.Id, &produto.Nome, &produto.Descricao, &produto.Preco, &produto.Quantidade)
 			if err != nil {
-				fmt.Print(err)
+				log.Print(err)
 				break
 			}
 			retorno = append(retorno, produto)

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"database/sql"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -21,14 +20,14 @@ func Init() {
 	conn, err = db.GetConnection()
 	err = db.Create(conn)
 	if err != nil {
-		fmt.Println("Erro na conexao")
+		log.Println("Erro na conexao")
 		panic(err)
 	}
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	produtos := db.SelectAll(conn)
-	fmt.Println(produtos)
+	log.Println(produtos)
 	temp.ExecuteTemplate(w, "Index", produtos)
 }
 
