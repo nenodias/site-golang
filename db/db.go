@@ -28,7 +28,7 @@ func GetConnection() (*sql.DB, error) {
 
 func Create(conn *sql.DB) error {
 	_, err := conn.Exec(`CREATE TABLE produto(
-			id int64 NOT NULL PRIMARY KEY,
+			id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
 			nome varchar(100) NOT NULL,
 			descricao varchar(255) NOT NULL,
 			preco float NOT NULL,
@@ -42,15 +42,27 @@ func Insert(conn *sql.DB, produto *models.Produto) error {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(`INSERT INTO produto(
-			id,
-			nome,
-			descricao,
-			preco,
-			quantidade
-		) VALUES(? , ?, ?, ?, ?) `, produto.Id, produto.Nome, produto.Descricao, produto.Preco, produto.Quantidade)
+	statement, err := tx.Prepare(`INSERT INTO produto(
+		nome,
+		descricao,
+		preco,
+		quantidade
+	) VALUES(?, ?, ?, ?) `)
+
 	if err != nil {
 		return err
+	}
+
+	res, err := statement.Exec(produto.Nome, produto.Descricao, produto.Preco, produto.Quantidade)
+
+	if err != nil {
+		return err
+	} else {
+		id, err := res.LastInsertId()
+		if err != nil {
+			return err
+		}
+		produto.Id = id
 	}
 	return tx.Commit()
 }
