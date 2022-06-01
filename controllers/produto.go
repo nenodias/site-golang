@@ -18,7 +18,6 @@ func Init() {
 	db.Init()
 	var err error
 	conn, err = db.GetConnection()
-	err = db.Create(conn)
 	if err != nil {
 		log.Println("Erro na conexao")
 		panic(err)
