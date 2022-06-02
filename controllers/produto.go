@@ -26,7 +26,6 @@ func Init() {
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	produtos := db.SelectAll(conn)
-	log.Println(produtos)
 	temp.ExecuteTemplate(w, "Index", produtos)
 }
 
@@ -50,6 +49,21 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 		err = db.Insert(conn, &p)
 		if err != nil {
 			log.Println("Erro ao salvar novo produto: ", err)
+		}
+	}
+	http.Redirect(w, r, "/", 301)
+}
+
+func Delete(w http.ResponseWriter, r *http.Request) {
+	log.Println("Converter id ")
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		log.Println("Erro ao converter id: ", err)
+	} else {
+		log.Println("Deletando registro: ", id)
+		err = db.Delete(conn, id)
+		if err != nil {
+			log.Println("Erro ao deletar produto: ", err)
 		}
 	}
 	http.Redirect(w, r, "/", 301)

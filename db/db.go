@@ -84,6 +84,23 @@ func Update(conn *sql.DB, produto *models.Produto) error {
 	return tx.Commit()
 }
 
+func Delete(conn *sql.DB, id int) error {
+	tx, err := conn.Begin()
+	if err != nil {
+		return err
+	}
+	statement, err := tx.Prepare(`DELETE FROM produto WHERE id = ?`)
+	if err != nil {
+		return err
+	} else {
+		_, err = statement.Exec(id)
+		if err != nil {
+			return err
+		}
+	}
+	return tx.Commit()
+}
+
 func SelectById(conn *sql.DB, id int) (*models.Produto, error) {
 	produto := models.Produto{}
 	res := conn.QueryRow("SELECT * FROM produto WHERE id = ? ", id)
