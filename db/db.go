@@ -72,19 +72,24 @@ func Update(conn *sql.DB, produto *models.Produto) error {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(`UPDATE produto SET
+	statement, err := tx.Prepare(`UPDATE produto SET
 			nome = ?,
 			descricao = ?,
 			preco = ?,
 			quantidade = ?
-		WHERE id = ?`, produto.Nome, produto.Descricao, produto.Preco, produto.Quantidade, produto.Id)
+		WHERE id = ?`)
 	if err != nil {
 		return err
+	} else {
+		_, err = statement.Exec(produto.Nome, produto.Descricao, produto.Preco, produto.Quantidade, produto.Id)
+		if err != nil {
+			return err
+		}
 	}
 	return tx.Commit()
 }
 
-func Delete(conn *sql.DB, id int) error {
+func Delete(conn *sql.DB, id int64) error {
 	tx, err := conn.Begin()
 	if err != nil {
 		return err
@@ -101,7 +106,7 @@ func Delete(conn *sql.DB, id int) error {
 	return tx.Commit()
 }
 
-func SelectById(conn *sql.DB, id int) (*models.Produto, error) {
+func SelectById(conn *sql.DB, id int64) (*models.Produto, error) {
 	produto := models.Produto{}
 	res := conn.QueryRow("SELECT * FROM produto WHERE id = ? ", id)
 	err := res.Scan(&produto.Id, &produto.Nome, &produto.Descricao, &produto.Preco, &produto.Quantidade)
@@ -113,7 +118,7 @@ func SelectById(conn *sql.DB, id int) (*models.Produto, error) {
 
 func SelectAll(conn *sql.DB) []models.Produto {
 	retorno := []models.Produto{}
-	res, err := conn.Query("SELECT * FROM produto", nil)
+	res, err := conn.Query("SELECT * FROM produto ORDER BY id ASC", nil)
 	if err == nil {
 		for res.Next() {
 			produto := models.Produto{}
